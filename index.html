@@ -1,0 +1,2235 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>قواعد النظم | أنظمة كاميرات المراقبة الاحترافية</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+    	/* استيراد الخط العربي من Google Fonts */
+@import url("https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap");
+
+/* إعدادات أساسية */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* إعدادات للـ body الخاص بكل الصفحة */
+body {
+  font-family: 'Cairo', sans-serif; /* تعيين الخط العربي */
+  background-color: #f9f9f9; /* خلفية الصفحة */
+  color: #333;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* إضافة التمرير السلس */
+html {
+  scroll-behavior: smooth;
+}
+
+/* شاشة التحميل */
+.loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #151515; /* لون الخلفية الكامل لشاشة التحميل */
+  color: #fff; /* لون النص داخل شاشة التحميل */
+  text-align: center;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.loading-text {
+  font-size: 40px;  /* تم تصغير حجم الخط من 80px إلى 50px */
+  font-weight: 400;
+  color: #fff; /* لون النص */
+  margin-bottom: 25px;
+  transition: all 0.3s ease;
+  font-family: 'Tajawal', sans-serif; /* تعيين الخط الجديد لشاشة التحميل */
+}
+
+
+.loading-add {
+  animation: loading-animate 0.7s ease-in-out 0.1s;
+}
+
+@keyframes loading-animate {
+  0% { opacity: 1; }
+  50% { opacity: 0.2; }
+  100% { opacity: 1; }
+}
+
+.loading-progress-bar {
+  width: 406px;
+  height: 22px;
+  background: #111;
+  border-radius: 13px;
+  padding: 3px;
+}
+
+.loading-progress {
+  width: 0px;
+  height: 16px;
+  background: #f60d54;
+  border-radius: 13px;
+  transition: width 0.05s linear;
+}
+
+.loading-percent {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 5px;
+  color: #fdb5ca;
+  font-size: 15px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  line-height: 23px;
+}
+
+/* محتوى الصفحة */
+.main-content {
+  display: none;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+  text-align: center;
+  padding-top: 100px;
+  color: white;
+  background-color: #151515; /* تحديد خلفية المحتوى */
+}
+
+.main-content.show {
+  display: block;
+  opacity: 1;
+}
+
+/* شريط التقدم */
+#progress-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 6px;
+  background-color: #e0e0e0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  z-index: 9999;
+  overflow: hidden;
+}
+
+#progress-bar {
+  height: 100%;
+  width: 0%;
+  background-color: #2c3e50;
+  transition: width 0.2s ease-out;
+  border-radius: 0 4px 4px 0;
+}
+
+/* ===== المتغيرات والألوان الأساسية ===== */
+:root {
+  --primary-color: #2c3e50;
+  --secondary-color: #3498db;
+  --accent-color: #e74c3c;
+  --light-color: #ecf0f1;
+  --dark-color: #1a252f;
+  --success-color: #27ae60;
+  --warning-color: #f39c12;
+  --info-color: #2980b9;
+  --text-color: #333;
+  --text-light: #7f8c8d;
+  --box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  --transition: all 0.3s ease-in-out;
+  --border-radius: 8px;
+  --section-padding: 80px 0;
+}
+
+
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        a {
+            text-decoration: none;
+            color: var(--secondary-color);
+            transition: var(--transition);
+        }
+
+        a:hover {
+            color: var(--primary-color);
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .section {
+            padding: var(--section-padding);
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+            position: relative;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            display: inline-block;
+            position: relative;
+            z-index: 1;
+        }
+
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            width: 50%;
+            height: 10px;
+            background-color: rgba(52, 152, 219, 0.2);
+            bottom: 5px;
+            right: 0;
+            z-index: -1;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: var(--secondary-color);
+            color: white;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            outline: none;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-3px);
+            box-shadow: var(--box-shadow);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .btn-accent {
+            background-color: var(--accent-color);
+        }
+
+        .btn-accent:hover {
+            background-color: #c0392b;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mb-5 {
+            margin-bottom: 3rem;
+        }
+
+        .mt-5 {
+            margin-top: 3rem;
+        }
+
+        /* ===== تنسيق رأس الصفحة ===== */
+        .header {
+            background-color: white;
+            box-shadow: var(--box-shadow);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: var(--transition);
+        }
+
+        .header.scrolled {
+            padding: 10px 0;
+            background-color: rgba(255, 255, 255, 0.95);
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo img {
+            height: 50px;
+            margin-left: 10px;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-right: 30px;
+        }
+
+        .nav-links a {
+            color: var(--primary-color);
+            font-weight: 600;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            background-color: var(--secondary-color);
+            bottom: -5px;
+            right: 0;
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            cursor: pointer;
+        }
+
+        /* ===== قسم الترحيب ===== */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('img/Bak.jpg');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(52, 152, 219, 0.2) 0%, rgba(0, 0, 0, 0) 70%);
+        }
+
+        .hero-content {
+            max-width: 800px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            color: white;
+            animation: fadeInDown 1s ease;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            animation: fadeInUp 1s ease 0.3s;
+            animation-fill-mode: both;
+        }
+
+        .hero-btns {
+            display: flex;
+            gap: 15px;
+            animation: fadeInUp 1s ease 0.6s;
+            animation-fill-mode: both;
+        }
+
+        .floating-circles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(52, 152, 219, 0.1);
+            animation: float 15s infinite linear;
+        }
+
+        .circle:nth-child(1) {
+            width: 100px;
+            height: 100px;
+            top: 20%;
+            left: 10%;
+            animation-duration: 25s;
+        }
+
+        .circle:nth-child(2) {
+            width: 150px;
+            height: 150px;
+            top: 60%;
+            left: 70%;
+            animation-duration: 30s;
+            animation-delay: 2s;
+        }
+
+        .circle:nth-child(3) {
+            width: 80px;
+            height: 80px;
+            top: 30%;
+            left: 80%;
+            animation-duration: 20s;
+            animation-delay: 1s;
+        }
+
+        .circle:nth-child(4) {
+            width: 200px;
+            height: 200px;
+            top: 70%;
+            left: 20%;
+            animation-duration: 35s;
+            animation-delay: 3s;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            50% {
+                transform: translate(100px, 100px) rotate(180deg);
+            }
+            100% {
+                transform: translate(0, 0) rotate(360deg);
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== قسم العروض ===== */
+        .offers {
+            background-color: white;
+        }
+
+        .offers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .offer-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .offer-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .offer-badge {
+            position: absolute;
+            top: 20px;
+            left: 0;
+            background-color: var(--accent-color);
+            color: white;
+            padding: 5px 15px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border-radius: 0 4px 4px 0;
+            z-index: 1;
+        }
+
+        .offer-img {
+            height: 200px;
+            width: 100%;
+            object-fit: cover;
+            border-bottom: 3px solid var(--secondary-color);
+        }
+
+        .offer-content {
+            padding: 20px;
+        }
+
+        .offer-title {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+
+        .offer-price {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .current-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-left: 10px;
+        }
+
+        .old-price {
+            font-size: 1rem;
+            color: var(--text-light);
+            text-decoration: line-through;
+        }
+
+        .discount-percentage {
+            background-color: var(--success-color);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-right: 10px;
+        }
+
+        .offer-features {
+            margin-bottom: 20px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .feature-item i {
+            color: var(--secondary-color);
+            margin-left: 10px;
+        }
+
+        /* ===== أقسام المنتجات ===== */
+        .product-categories {
+            background-color: #f9f9f9;
+        }
+
+        .categories-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .category-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .category-card:hover .category-icon {
+            transform: scale(1.1);
+        }
+
+        .category-icon {
+            font-size: 3rem;
+            color: var(--secondary-color);
+            margin: 30px 0;
+            transition: var(--transition);
+        }
+
+        .category-title {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .category-description {
+            padding: 0 20px 30px;
+            color: var(--text-light);
+        }
+
+        /* ===== قسم المميزات والخدمات ===== */
+        .features {
+            background-color: white;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-box {
+            padding: 30px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .feature-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background-color: var(--secondary-color);
+            transition: var(--transition);
+            z-index: -1;
+        }
+
+        .feature-box:hover::before {
+            width: 100%;
+            background-color: rgba(52, 152, 219, 0.1);
+        }
+
+        .feature-box:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+        }
+
+        .feature-title {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+
+        .feature-description {
+            color: var(--text-light);
+        }
+
+        /* ===== جدول العروض التفصيلية ===== */
+        .detailed-offers {
+            background-color: #f9f9f9;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            box-shadow: var(--box-shadow);
+            border-radius: var(--border-radius);
+            background-color: white;
+        }
+
+        .offers-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .offers-table th, .offers-table td {
+            padding: 15px;
+            text-align: right;
+            border-bottom: 1px solid #eee;
+        }
+
+        .offers-table th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+        }
+
+        .offers-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .offers-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .offers-table tr:hover {
+            background-color: rgba(52, 152, 219, 0.05);
+        }
+
+        .camera-model {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .price-cell {
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .discount-cell {
+            color: var(--success-color);
+            font-weight: 600;
+        }
+
+        /* ===== صور التركيب ===== */
+        .installation-gallery {
+            background-color: white;
+        }
+
+        .gallery-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .gallery-item {
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            position: relative;
+            height: 250px;
+            cursor: pointer;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.05);
+        }
+
+        .gallery-item::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 60%);
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .gallery-item:hover::after {
+            opacity: 1;
+        }
+
+        .gallery-caption {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            padding: 20px;
+            color: white;
+            z-index: 1;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: var(--transition);
+        }
+
+        .gallery-item:hover .gallery-caption {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ===== آراء العملاء ===== */
+        .testimonials {
+            background-color: #f9f9f9;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .testimonials::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><text x="10" y="50" font-family="Arial" font-size="80" opacity="0.03">%E2%80%9D</text></svg>') repeat;
+            opacity: 0.5;
+        }
+
+        .testimonials-slider {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .testimonial-item {
+            background-color: white;
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin: 20px;
+            position: relative;
+        }
+
+        .testimonial-content {
+            margin-bottom: 20px;
+            font-style: italic;
+            position: relative;
+            padding-right: 30px;
+        }
+
+        .testimonial-content::before {
+            content: '\f10d';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            top: 0;
+            right: 0;
+            color: var(--secondary-color);
+            opacity: 0.3;
+            font-size: 1.5rem;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+        }
+
+        .author-img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-left: 15px;
+            border: 3px solid var(--secondary-color);
+        }
+
+        .author-info h4 {
+            margin-bottom: 5px;
+        }
+
+        .author-info p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .rating {
+            color: var(--warning-color);
+            margin-top: 5px;
+        }
+
+        .slider-nav {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .slider-btn {
+            background-color: var(--primary-color);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 5px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .slider-btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-3px);
+        }
+
+        /* ===== المقال التعريفي ===== */
+        .article {
+            background-color: white;
+        }
+
+        .article-content {
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        .article-content h3 {
+            margin-top: 30px;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .article-content p {
+            margin-bottom: 20px;
+        }
+
+        .article-content ul {
+            margin-bottom: 20px;
+            padding-right: 20px;
+        }
+
+        .article-content li {
+            margin-bottom: 10px;
+        }
+
+        .article-content img {
+            border-radius: var(--border-radius);
+            margin: 20px 0;
+            box-shadow: var(--box-shadow);
+        }
+
+        /* ===== الأسئلة الشائعة ===== */
+        .faq {
+            background-color: #f9f9f9;
+        }
+
+        .accordion {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .accordion-item {
+            background-color: white;
+            border-radius: var(--border-radius);
+            margin-bottom: 15px;
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+        }
+
+        .accordion-header {
+            padding: 20px;
+            background-color: white;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .accordion-header:hover {
+            background-color: rgba(52, 152, 219, 0.05);
+        }
+
+        .accordion-header h3 {
+            margin: 0;
+            font-size: 1.1rem;
+        }
+
+        .accordion-icon {
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+            transition: var(--transition);
+        }
+
+        .accordion-content {
+            padding: 0 20px;
+            max-height: 0;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .accordion-content p {
+            padding-bottom: 20px;
+            color: var(--text-light);
+        }
+
+        .accordion-item.active .accordion-header {
+            background-color: rgba(52, 152, 219, 0.05);
+        }
+
+        .accordion-item.active .accordion-icon {
+            transform: rotate(180deg);
+        }
+
+        .accordion-item.active .accordion-content {
+            max-height: 1000px;
+        }
+
+        /* ===== تذييل الصفحة ===== */
+        .footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 60px 0 0;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .footer-column h3 {
+            color: white;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 50px;
+            height: 2px;
+            background-color: var(--secondary-color);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: #bdc3c7;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: var(--secondary-color);
+            padding-right: 5px;
+        }
+
+        .contact-info {
+            margin-bottom: 20px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .contact-icon {
+            color: var(--secondary-color);
+            margin-left: 15px;
+            font-size: 1.2rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .social-link:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-5px);
+        }
+
+        .copyright {
+            text-align: center;
+            padding: 20px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #bdc3c7;
+            font-size: 0.9rem;
+        }
+
+        /* ===== زر العودة للأعلى ===== */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            width: 50px;
+            height: 50px;
+            background-color: var(--secondary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+            z-index: 999;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .back-to-top.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-to-top:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-5px);
+        }
+
+        /* ===== تصميم متجاوب ===== */
+        @media (max-width: 992px) {
+            .hero h1 {
+                font-size: 2.8rem;
+            }
+            
+            .section-title h2 {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 15px 0;
+            }
+            
+            .nav-links {
+                position: fixed;
+                top: 80px;
+                right: -100%;
+                width: 80%;
+                height: calc(100vh - 80px);
+                background-color: white;
+                flex-direction: column;
+                align-items: center;
+                padding: 40px 0;
+                transition: var(--transition);
+                box-shadow: var(--box-shadow);
+            }
+            
+            .nav-links.show {
+                right: 0;
+            }
+            
+            .nav-links li {
+                margin-right: 0;
+                margin-bottom: 20px;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .hero h1 {
+                font-size: 2.3rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .hero-btns {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .section-title h2 {
+                font-size: 1.8rem;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .section-title h2 {
+                font-size: 1.5rem;
+            }
+            
+            .offer-card, .category-card, .feature-box {
+                margin-bottom: 20px;
+            }
+            
+            .gallery-item {
+                height: 200px;
+            }
+        }
+
+        /* ===== التحميل المتأخر للصور ===== */
+        .lazy-load {
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .lazy-load.loaded {
+            opacity: 1;
+        }
+
+        /* ===== مؤثرات التمرير ===== */
+        .scroll-animation {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .scroll-animation.animate {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ===== نافذة العرض المصغر ===== */
+        .lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1010;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .lightbox.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .lightbox-content {
+            max-width: 90%;
+            max-height: 90%;
+            position: relative;
+        }
+
+        .lightbox-img {
+            max-width: 100%;
+            max-height: 90vh;
+            border: 5px solid white;
+            border-radius: var(--border-radius);
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+        }
+
+        .lightbox-caption {
+            position: absolute;
+            bottom: -40px;
+            left: 0;
+            width: 100%;
+            color: white;
+            text-align: center;
+        }
+        
+        .gallery-caption h4 {
+    background-color: rgba(255, 255, 255, 0.7);
+    padding: 10px;
+    border-radius: 5px;
+    display: inline-block;
+}
+
+.hero {
+    margin-top: 0;
+    padding-top: 0;
+    position: relative;
+    top: -20px; /* جرّب تعديل القيمة حسب الحاجة */
+}
+
+    </style>
+</head>
+<body>
+	<!-- شاشة التحميل -->
+  <div class="loading-screen" id="loading-screen">
+    <div class="loading-text">جارٍ التحميل...</div>
+    <label class="loading-percent">0%</label>
+    <div class="loading-progress-bar">
+      <div class="loading-progress"></div>
+    </div>
+  </div>
+
+  <!-- محتوى الصفحة -->
+  <div class="main-content" id="main-content">
+    
+  
+	<!-- شريط التمرير -->
+  <div id="progress-container">
+    <div id="progress-bar"></div>
+  </div>
+    <!-- رأس الصفحة -->
+    <header class="header" id="header">
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">
+                    <img src="icn/logo.png" alt="شعار أنظمة المراقبة">
+                    <div class="logo-text"></div>
+                </div>
+                <ul class="nav-links" id="nav-links">
+                    <li><a href="#hero">الرئيسية</a></li>
+                    <li><a href="#offers">العروض</a></li>
+                    <li><a href="#product-categories">المنتجات</a></li>
+                    <li><a href="#features">خدماتنا</a></li>
+                    <li><a href="#detailed-offers">الأسعار</a></li>
+                    <li><a href="#gallery">معرض الأعمال</a></li>
+                    <li><a href="#testimonials">آراء العملاء</a></li>
+                    <li><a href="#faq">الأسئلة الشائعة</a></li>
+                    <li><a href="#contact">اتصل بنا</a></li>
+                </ul>
+                <button class="mobile-menu-btn" id="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- قسم الترحيب -->
+    <section class="hero" id="hero">
+        <div class="floating-circles">
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+        </div>
+        <div class="container">
+            <div class="hero-content">
+                <h1>أنظمة كاميرات مراقبة احترافية لحماية ما يهمك</h1>
+                <p>نوفر لك أحدث تقنيات المراقبة الأمنية بجودة عالية وأسعار منافسة. حلول متكاملة للمنازل والشركات والمنشآت التجارية مع خدمة تركيب احترافية وضمان شامل.</p>
+                <div class="hero-btns">
+                    <a href="#offers" class="btn">استعرض العروض</a>
+                    <a href="#contact" class="btn btn-primary">تواصل معنا</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- قسم العروض -->
+<section class="section offers" id="offers">
+    <div class="container">
+        <div class="section-title scroll-animation">
+            <h2>عروضنا المميزة</h2>
+        </div>
+        <div class="offers-grid">
+            <div class="offer-card scroll-animation">
+                <div class="offer-badge">عرض خاص</div>
+                <img src="img/1.jpg" alt="كاميرا داخلية" class="offer-img">
+                <div class="offer-content">
+                    <h3 class="offer-title">كاميرا داخلية عالية الدقة</h3>
+                    <div class="offer-price">
+                        <span class="current-price">299 ريال</span>
+                        <span class="old-price">399 ريال</span>
+                        <span class="discount-percentage">25%</span>
+                    </div>
+                    <div class="offer-features">
+                        <div class="feature-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>دقة 2 ميجابكسل (1080p)</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>رؤية ليلية 20 متر</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>مقاومة للماء والغبار</span>
+                        </div>
+                    </div>
+                    <a href="#contact" class="btn btn-primary">اطلب الآن</a>
+                </div>
+            </div>
+
+            <div class="offer-card scroll-animation">
+                <div class="offer-badge">الأكثر مبيعاً</div>
+                <img src="img/2.jpg" alt="كاميرا خارجية" class="offer-img">
+                <div class="offer-content">
+                    <h3 class="offer-title">كاميرا خارجية مضادة للماء</h3>
+                    <div class="offer-price">
+                        <span class="current-price">449 ريال</span>
+                        <span class="old-price">599 ريال</span>
+                        <span class="discount-percentage">25%</span>
+                    </div>
+                    <div class="offer-features">
+                        <div class="feature-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>دقة 5 ميجابكسل (2K)</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>رؤية ليلية 30 متر</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>مقاومة للعوامل الجوية IP67</span>
+                        </div>
+                    </div>
+                    <a href="#contact" class="btn btn-primary">اطلب الآن</a>
+                </div>
+            </div>
+
+            <div class="offer-card scroll-animation">
+                <div class="offer-badge">توفير 30%</div>
+                <img src="img/3.jpg" alt="كاميرا متحركة" class="offer-img">
+                <div class="offer-content">
+                    <h3 class="offer-title">كاميرا متحركة PTZ</h3>
+                    <div class="offer-price">
+                        <span class="current-price">699 ريال</span>
+                        <span class="old-price">999 ريال</span>
+                        <span class="discount-percentage">30%</span>
+                    </div>
+                    <div class="offer-features">
+                        <div class="feature-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>دقة 4 ميجابكسل</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>تحكم كامل بالحركة 360 درجة</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>تكبير بصري 20x</span>
+                        </div>
+                    </div>
+                    <a href="#contact" class="btn btn-primary">اطلب الآن</a>
+                </div>
+            </div>
+
+            <div class="offer-card scroll-animation">
+                <div class="offer-badge">عرض محدود</div>
+                <img src="img/4.jpg" alt="جهاز تسجيل" class="offer-img">
+                <div class="offer-content">
+                    <h3 class="offer-title">جهاز تسجيل NVR 8 قنوات</h3>
+                    <div class="offer-price">
+                        <span class="current-price">899 ريال</span>
+                        <span class="old-price">1199 ريال</span>
+                        <span class="discount-percentage">25%</span>
+                    </div>
+                    <div class="offer-features">
+                        <div class="feature-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>تسجيل 8 كاميرات بدقة 4K</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>هارد ديسك 2 تيرابايت</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>مراقبة عن بعد عبر الجوال</span>
+                        </div>
+                    </div>
+                    <a href="#contact" class="btn btn-primary">اطلب الآن</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+    <!-- أقسام المنتجات -->
+    <section class="section product-categories" id="product-categories">
+        <div class="container">
+            <div class="section-title scroll-animation">
+                <h2>تصنيفات المنتجات</h2>
+            </div>
+            <div class="categories-container">
+                <div class="category-card scroll-animation">
+                    <div class="category-icon">
+                        <i class="fas fa-video"></i>
+                    </div>
+                    <h3 class="category-title">كاميرات داخلية</h3>
+                    <p class="category-description">كاميرات مراقبة عالية الدقة مصممة خصيصاً للاستخدام الداخلي في المنازل والمكاتب والمحلات التجارية.</p>
+                </div>
+
+                <div class="category-card scroll-animation">
+                    <div class="category-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 class="category-title">كاميرات خارجية</h3>
+                    <p class="category-description">كاميرات مقاومة للعوامل الجوية مصممة للمراقبة الخارجية بدقة عالية ورؤية ليلية متميزة.</p>
+                </div>
+
+                <div class="category-card scroll-animation">
+                    <div class="category-icon">
+                        <i class="fas fa-sync-alt"></i>
+                    </div>
+                    <h3 class="category-title">كاميرات متحركة PTZ</h3>
+                    <p class="category-description">كاميرات متحركة بتقنية التحكم عن بعد تتيح لك مراقبة مساحات واسعة بزاوية 360 درجة.</p>
+                </div>
+
+                <div class="category-card scroll-animation">
+                    <div class="category-icon">
+                        <i class="fas fa-hdd"></i>
+                    </div>
+                    <h3 class="category-title">أجهزة التسجيل</h3>
+                    <p class="category-description">أجهزة تسجيل NVR و DVR متطورة لتخزين وإدارة تسجيلات الكاميرات بسعات تخزينية مختلفة.</p>
+                </div>
+
+                <div class="category-card scroll-animation">
+                    <div class="category-icon">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <h3 class="category-title">ملحقات وإكسسوارات</h3>
+                    <p class="category-description">مجموعة متكاملة من الملحقات مثل الكابلات، المحولات، الشاشات، وأجهزة التوزيع لتكمل نظام المراقبة.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- قسم المميزات والخدمات -->
+    <section class="section features" id="features">
+        <div class="container">
+            <div class="section-title scroll-animation">
+                <h2>خدماتنا المميزة</h2>
+            </div>
+            <div class="features-grid">
+                <div class="feature-box scroll-animation">
+                    <div class="feature-icon">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                    <h3 class="feature-title">تركيب احترافي</h3>
+                    <p class="feature-description">فريق فني متخصص يقوم بتركيب أنظمة المراقبة باحترافية عالية وفق أفضل المعايير التقنية لضمان أداء مثالي.</p>
+                </div>
+
+                <div class="feature-box scroll-animation">
+                    <div class="feature-icon">
+                        <i class="fas fa-certificate"></i>
+                    </div>
+                    <h3 class="feature-title">ضمان شامل</h3>
+                    <p class="feature-description">نقدم ضمان شامل على جميع منتجاتنا لمدة تصل إلى 3 سنوات مع خدمة الصيانة الدورية لضمان استمرارية الأداء.</p>
+                </div>
+
+                <div class="feature-box scroll-animation">
+                    <div class="feature-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h3 class="feature-title">دعم فني 24/7</h3>
+                    <p class="feature-description">فريق دعم فني متكامل متاح على مدار الساعة لحل أي مشكلة تقنية قد تواجهك والإجابة على جميع استفساراتك.</p>
+                </div>
+
+                <div class="feature-box scroll-animation">
+                    <div class="feature-icon">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                    <h3 class="feature-title">شحن سريع</h3>
+                    <p class="feature-description">خدمة توصيل سريعة لجميع مناطق المملكة خلال 24-48 ساعة مع إمكانية التركيب الفوري بعد الاستلام.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- جدول العروض التفصيلية -->
+<section class="section detailed-offers" id="detailed-offers">
+    <div class="container">
+        <div class="section-title scroll-animation">
+            <h2 style="color: black;">عروض وأسعار تفصيلية</h2>
+        </div>
+        <div class="table-container scroll-animation">
+            <table class="offers-table">
+                <thead>
+                    <tr>
+                        <th style="color: black;">المنتج</th>
+                        <th style="color: black;">المواصفات</th>
+                        <th style="color: black;">السعر الأصلي</th>
+                        <th style="color: black;">الخصم</th>
+                        <th style="color: black;">السعر بعد الخصم</th>
+                        <th style="color: black;">ملاحظات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="camera-model" style="color: black;">كاميرا داخلية Hikvision</td>
+                        <td style="color: black;">2MP، رؤية ليلية 20م، زاوية 90°</td>
+                        <td style="color: black;">399 ريال</td>
+                        <td class="discount-cell">25%</td>
+                        <td class="price-cell" style="color: black;">299 ريال</td>
+                        <td style="color: black;">تشمل التركيب المجاني</td>
+                    </tr>
+                    <tr>
+                        <td class="camera-model" style="color: black;">كاميرا خارجية Dahua</td>
+                        <td style="color: black;">5MP، رؤية ليلية 30م، مقاومة للماء</td>
+                        <td style="color: black;">599 ريال</td>
+                        <td class="discount-cell">25%</td>
+                        <td class="price-cell" style="color: black;">449 ريال</td>
+                        <td style="color: black;">ضمان 3 سنوات</td>
+                    </tr>
+                    <tr>
+                        <td class="camera-model" style="color: black;">كاميرا متحركة PTZ</td>
+                        <td style="color: black;">4MP، تحكم 360°، تكبير 20x</td>
+                        <td style="color: black;">999 ريال</td>
+                        <td class="discount-cell">30%</td>
+                        <td class="price-cell" style="color: black;">699 ريال</td>
+                        <td style="color: black;">تشمل وحدة تحكم</td>
+                    </tr>
+                    <tr>
+                        <td class="camera-model" style="color: black;">جهاز تسجيل NVR</td>
+                        <td style="color: black;">8 قنوات، هارد 2TB، دعم 4K</td>
+                        <td style="color: black;">1199 ريال</td>
+                        <td class="discount-cell">25%</td>
+                        <td class="price-cell" style="color: black;">899 ريال</td>
+                        <td style="color: black;">مع تطبيق مراقبة للجوال</td>
+                    </tr>
+                    <tr>
+                        <td class="camera-model" style="color: black;">نظام كامل للمنزل</td>
+                        <td style="color: black;">4 كاميرات + جهاز تسجيل + شاشة</td>
+                        <td style="color: black;">2499 ريال</td>
+                        <td class="discount-cell">20%</td>
+                        <td class="price-cell" style="color: black;">1999 ريال</td>
+                        <td style="color: black;">تركيب وبرمجة مجاناً</td>
+                    </tr>
+                    <tr>
+                        <td class="camera-model" style="color: black;">نظام كامل للشركات</td>
+                        <td style="color: black;">8 كاميرات + NVR + شاشة 24 بوصة</td>
+                        <td style="color: black;">4999 ريال</td>
+                        <td class="discount-cell">20%</td>
+                        <td class="price-cell" style="color: black;">3999 ريال</td>
+                        <td style="color: black;">تدريب مجاني على الاستخدام</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+
+    <!-- صور التركيب -->
+<section class="section installation-gallery" id="gallery">
+    <div class="container">
+        <div class="section-title scroll-animation">
+            <h2>معرض أعمالنا</h2>
+        </div>
+        <div class="gallery-container">
+            <div class="gallery-item scroll-animation">
+                <img src="img/5.jpg" alt="تركيب كاميرات في مكتب" class="lazy-load">
+                <div class="gallery-caption">
+                    <h4>تركيب نظام مراقبة متكامل لشركة</h4>
+                </div>
+            </div>
+            <div class="gallery-item scroll-animation">
+                <img src="img/6.jpg" alt="تركيب كاميرات خارجية" class="lazy-load">
+                <div class="gallery-caption">
+                    <h4>تركيب كاميرات خارجية لفيلا سكنية</h4>
+                </div>
+            </div>
+            <div class="gallery-item scroll-animation">
+                <img src="img/7.jpg" alt="غرفة مراقبة" class="lazy-load">
+                <div class="gallery-caption">
+                    <h4>تجهيز غرفة مراقبة لمجمع تجاري</h4>
+                </div>
+            </div>
+            <div class="gallery-item scroll-animation">
+                <img src="img/8.jpg" alt="كاميرات متحركة" class="lazy-load">
+                <div class="gallery-caption">
+                    <h4>تركيب كاميرات متحركة في مستودع</h4>
+                </div>
+            </div>
+            <div class="gallery-item scroll-animation">
+                <img src="img/9.jpg" alt="نظام مراقبة منزلي" class="lazy-load">
+                <div class="gallery-caption">
+                    <h4>تركيب نظام مراقبة منزلي متكامل</h4>
+                </div>
+            </div>
+            <div class="gallery-item scroll-animation">
+                <img src="img/10.jpg" alt="كاميرات للمحلات" class="lazy-load">
+                <div class="gallery-caption">
+                    <h4>تركيب كاميرات لمحل تجاري</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+    <!-- آراء العملاء -->
+<section class="section testimonials" id="testimonials">
+    <div class="container">
+        <div class="section-title scroll-animation">
+            <h2 style="color: black;">آراء عملائنا</h2>
+        </div>
+        <div class="testimonials-slider scroll-animation">
+            <div class="testimonial-item active">
+                <div class="testimonial-content">
+                    <p style="color: black;">تعاملت مع شركة سمارت سيكيوريتي لتركيب نظام مراقبة كامل لمنزلي، وكانت التجربة ممتازة من البداية للنهاية. الفريق الفني محترف جداً والأسعار منافسة والجودة عالية. أنصح بهم بشدة.</p>
+                </div>
+                <div class="testimonial-author">
+                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="أحمد السعيد" class="author-img">
+                    <div class="author-info">
+                        <h4 style="color: black;">أحمد السعيد</h4>
+                        <p style="color: black;">الرياض</p>
+                        <div class="rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-item">
+                <div class="testimonial-content">
+                    <p style="color: black;">قمت بتركيب كاميرات مراقبة لمحلي التجاري من خلال سمارت سيكيوريتي، وكانت الخدمة ممتازة والتركيب احترافي. الكاميرات ذات جودة عالية والصورة واضحة جداً. سعيد جداً بالتعامل معهم.</p>
+                </div>
+                <div class="testimonial-author">
+                    <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="نورة العتيبي" class="author-img">
+                    <div class="author-info">
+                        <h4 style="color: black;">نورة العتيبي</h4>
+                        <p style="color: black;">جدة</p>
+                        <div class="rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-item">
+                <div class="testimonial-content">
+                    <p style="color: black;">تعاملت مع سمارت سيكيوريتي لتركيب نظام مراقبة كامل لمكتبي، وكانت التجربة رائعة. الفريق الفني محترف والأسعار تنافسية والجودة ممتازة. الدعم الفني متعاون جداً ويستجيب بسرعة لأي استفسار.</p>
+                </div>
+                <div class="testimonial-author">
+                    <img src="https://randomuser.me/api/portraits/men/62.jpg" alt="فهد الشمري" class="author-img">
+                    <div class="author-info">
+                        <h4 style="color: black;">فهد الشمري</h4>
+                        <p style="color: black;">الدمام</p>
+                        <div class="rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="slider-nav">
+            <div class="slider-btn prev-btn">
+                <i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="slider-btn next-btn">
+                <i class="fas fa-chevron-left"></i>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+    <!-- المقال التعريفي -->
+<section class="section article" id="article">
+    <div class="container">
+        <div class="section-title scroll-animation">
+            <h2 style="color: black; font-family: 'Tajawal', sans-serif;">دليلك الشامل لأنظمة المراقبة</h2>
+        </div>
+        <div class="article-content scroll-animation">
+            <p style="color: black; font-family: 'Tajawal', sans-serif;">تعتبر أنظمة كاميرات المراقبة من أهم وسائل الأمان في عصرنا الحالي، حيث توفر حماية فعالة للممتلكات والأشخاص وتساهم في الحد من السرقات والاعتداءات. في هذا الدليل سنتعرف على أنواع كاميرات المراقبة والفروقات بينها لمساعدتك في اختيار النظام المناسب لاحتياجاتك.</p>
+
+            <h3 style="color: black; font-family: 'Tajawal', sans-serif;">أنواع كاميرات المراقبة الرئيسية</h3>
+            <p style="color: black; font-family: 'Tajawal', sans-serif;">تنقسم كاميرات المراقبة إلى عدة أنواع رئيسية، ولكل نوع مميزاته واستخداماته:</p>
+
+            <ul style="color: black; font-family: 'Tajawal', sans-serif;">
+                <li><strong>الكاميرات الداخلية:</strong> مصممة للاستخدام داخل المباني، وتتميز بتصميم أنيق وحجم صغير نسبياً. مناسبة للمنازل والمكاتب والمحلات التجارية.</li>
+                <li><strong>الكاميرات الخارجية:</strong> مصممة لتحمل الظروف الجوية المختلفة، وتتميز بمقاومتها للماء والغبار ودرجات الحرارة المتفاوتة. تستخدم لمراقبة محيط المباني والمداخل والساحات.</li>
+                <li><strong>كاميرات PTZ المتحركة:</strong> تتميز بإمكانية التحكم في حركتها (التدوير والإمالة والتكبير)، مما يتيح تغطية مساحة واسعة بكاميرا واحدة. مثالية للمساحات الكبيرة والمفتوحة.</li>
+                <li><strong>كاميرات IP:</strong> تعمل عبر شبكة الإنترنت وتتيح المراقبة عن بعد من أي مكان في العالم. تتميز بجودة صورة عالية وإمكانيات متقدمة.</li>
+                <li><strong>كاميرات التعرف على الوجوه:</strong> تستخدم تقنيات الذكاء الاصطناعي للتعرف على الوجوه وتحديد هوية الأشخاص. مناسبة للأماكن التي تتطلب مستوى أمان عالٍ.</li>
+            </ul>
+
+            <h3 style="color: black; font-family: 'Tajawal', sans-serif;">الفرق بين أنظمة DVR و NVR</h3>
+            <p style="color: black; font-family: 'Tajawal', sans-serif;">عند اختيار نظام تسجيل لكاميرات المراقبة، ستواجه مصطلحي DVR و NVR:</p>
+
+            <ul style="color: black; font-family: 'Tajawal', sans-serif;">
+                <li><strong>DVR (Digital Video Recorder):</strong> يستخدم مع الكاميرات التناظرية التقليدية، ويتم توصيل الكاميرات به عبر كابلات الكواكسيال. يعتبر خياراً اقتصادياً ومناسباً للمشاريع الصغيرة.</li>
+                <li><strong>NVR (Network Video Recorder):</strong> يستخدم مع كاميرات IP، ويتم توصيل الكاميرات به عبر شبكة الإنترنت. يوفر جودة صورة أعلى وميزات متقدمة مثل التحليلات الذكية والمراقبة عن بعد.</li>
+            </ul>
+
+            <h3 style="color: black; font-family: 'Tajawal', sans-serif;">كيفية اختيار النظام المناسب</h3>
+            <p style="color: black; font-family: 'Tajawal', sans-serif;">عند اختيار نظام المراقبة المناسب، يجب مراعاة العوامل التالية:</p>
+
+            <ul style="color: black; font-family: 'Tajawal', sans-serif;">
+                <li><strong>المساحة المراد تغطيتها:</strong> حدد المناطق التي تحتاج إلى مراقبة وعدد الكاميرات اللازمة لتغطيتها بشكل كامل.</li>
+                <li><strong>البيئة:</strong> هل ستكون الكاميرات في الداخل أم الخارج؟ هل ستتعرض للعوامل الجوية القاسية؟</li>
+                <li><strong>دقة الصورة:</strong> كلما زادت الدقة (ميجابكسل)، كانت الصورة أوضح وأكثر تفصيلاً.</li>
+                <li><strong>الرؤية الليلية:</strong> إذا كنت بحاجة إلى المراقبة في الظلام، تأكد من أن الكاميرات مزودة بخاصية الرؤية الليلية ومدى وضوحها.</li>
+                <li><strong>سعة التخزين:</strong> حدد المدة التي تريد الاحتفاظ بالتسجيلات خلالها، واختر جهاز تسجيل بسعة تخزين مناسبة.</li>
+                <li><strong>إمكانية المراقبة عن بعد:</strong> إذا كنت ترغب في مراقبة الكاميرات من هاتفك أو جهاز الكمبيوتر، تأكد من أن النظام يدعم هذه الخاصية.</li>
+            </ul>
+
+            <h3 style="color: black; font-family: 'Tajawal', sans-serif;">نصائح لتحسين أداء نظام المراقبة</h3>
+            <p style="color: black; font-family: 'Tajawal', sans-serif;">للحصول على أفضل أداء من نظام المراقبة الخاص بك:</p>
+
+            <ul style="color: black; font-family: 'Tajawal', sans-serif;">
+                <li>ضع الكاميرات في أماكن استراتيجية تغطي المداخل والمخارج والمناطق الحيوية.</li>
+                <li>تأكد من تثبيت الكاميرات على ارتفاع مناسب (2.5-3 متر) لتجنب العبث بها.</li>
+                <li>قم بصيانة النظام بشكل دوري وتنظيف عدسات الكاميرات للحفاظ على جودة الصورة.</li>
+                <li>استخدم نظام UPS لضمان استمرار عمل النظام في حالة انقطاع التيار الكهربائي.</li>
+                <li>قم بتحديث برامج النظام بانتظام للاستفادة من التحسينات الأمنية والميزات الجديدة.</li>
+            </ul>
+
+            <p style="color: black; font-family: 'Tajawal', sans-serif;">في النهاية، يعتبر الاستثمار في نظام مراقبة عالي الجودة استثماراً في أمان ممتلكاتك وراحة بالك. لذا، احرص على اختيار النظام المناسب لاحتياجاتك والاستعانة بخبراء متخصصين لتركيبه وضبطه بشكل احترافي.</p>
+        </div>
+    </div>
+</section>
+
+
+    <!-- الأسئلة الشائعة -->
+    <section class="section faq" id="faq">
+        <div class="container">
+            <div class="section-title scroll-animation">
+                <h2>الأسئلة الشائعة</h2>
+            </div>
+            <div class="accordion scroll-animation">
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <h3>ما هي أفضل أنواع كاميرات المراقبة للمنازل؟</h3>
+                        <div class="accordion-icon">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="accordion-content">
+                        <p>للمنازل، ننصح باستخدام مزيج من الكاميرات الداخلية والخارجية. الكاميرات الداخلية بدقة 2 ميجابكسل كافية لمعظم الغرف، بينما يفضل استخدام كاميرات خارجية بدقة 4-5 ميجابكسل للمداخل والساحات. من الأفضل اختيار كاميرات تدعم الرؤية الليلية ومقاومة للعوامل الجوية للاستخدام الخارجي.</p>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <h3>كم عدد الكاميرات التي أحتاجها لتأمين منزلي؟</h3>
+                        <div class="accordion-icon">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="accordion-content">
+                        <p>يعتمد عدد الكاميرات على مساحة المنزل وتصميمه. بشكل عام، يحتاج المنزل المتوسط إلى 4-6 كاميرات لتغطية المداخل الرئيسية والخلفية والممرات والساحة الأمامية والخلفية. يمكننا تقديم استشارة مجانية لتحديد العدد المثالي بناءً على احتياجاتك الخاصة.</p>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <h3>هل يمكنني مراقبة الكاميرات من هاتفي الجوال؟</h3>
+                        <div class="accordion-icon">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="accordion-content">
+                        <p>نعم، جميع أنظمة المراقبة التي نقدمها تدعم المراقبة عن بعد من خلال تطبيقات خاصة على الهواتف الذكية (أندرويد وآيفون). يمكنك مشاهدة البث المباشر للكاميرات، واستعراض التسجيلات السابقة، وتلقي إشعارات عند اكتشاف حركة، كل ذلك من أي مكان في العالم طالما يتوفر اتصال بالإنترنت.</p>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <h3>ما هي مدة الضمان على أنظمة المراقبة؟</h3>
+                        <div class="accordion-icon">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="accordion-content">
+                        <p>نقدم ضماناً شاملاً لمدة سنة على جميع أنظمة المراقبة، مع إمكانية تمديد الضمان إلى 3 سنوات. يشمل الضمان استبدال أي قطعة معيبة وخدمة الصيانة المجانية. كما نقدم خدمة الصيانة الدورية بعد انتهاء فترة الضمان بأسعار تنافسية.</p>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <h3>كم من الوقت يستغرق تركيب نظام المراقبة؟</h3>
+                        <div class="accordion-icon">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="accordion-content">
+                        <p>يعتمد وقت التركيب على حجم المشروع وعدد الكاميرات. بشكل عام، يستغرق تركيب نظام منزلي بسيط (4-6 كاميرات) يوماً واحداً. أما المشاريع الأكبر مثل الشركات والمجمعات التجارية فقد تستغرق 2-3 أيام. نحرص على إتمام العمل بدقة واحترافية دون إزعاج أو تعطيل لأنشطتك اليومية.</p>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <h3>هل تقدمون خدمات الصيانة بعد التركيب؟</h3>
+                        <div class="accordion-icon">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="accordion-content">
+                        <p>نعم، نقدم خدمات صيانة دورية وطارئة لجميع أنظمة المراقبة. خلال فترة الضمان، تكون الصيانة مجانية بالكامل. بعد انتهاء فترة الضمان، نقدم عقود صيانة سنوية بأسعار تنافسية تشمل زيارات دورية للتأكد من سلامة النظام وتحديث البرامج وتنظيف المعدات.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- تذييل الصفحة -->
+    <footer class="footer" id="contact">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>من نحن</h3>
+                    <p>قواعد النظم شركة متخصصة في توريد وتركيب أنظمة المراقبة الأمنية بأحدث التقنيات وأعلى معايير الجودة. نسعى دائماً لتقديم حلول أمنية متكاملة تلبي احتياجات عملائنا وتضمن لهم الحماية والأمان.</p>
+                </div>
+                <div class="footer-column">
+                    <h3>روابط سريعة</h3>
+                    <ul class="footer-links">
+                        <li><a href="#hero">الرئيسية</a></li>
+                        <li><a href="#offers">العروض</a></li>
+                        <li><a href="#product-categories">المنتجات</a></li>
+                        <li><a href="#features">خدماتنا</a></li>
+                        <li><a href="#gallery">معرض الأعمال</a></li>
+                        <li><a href="#testimonials">آراء العملاء</a></li>
+                        <li><a href="#faq">الأسئلة الشائعة</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+    <h3>اتصل بنا</h3>
+    <div class="contact-info">
+        <div class="contact-item">
+            <div class="contact-icon">
+                <i class="fas fa-map-marker-alt"></i>
+            </div>
+            <div>
+                <p>الرياض، الدائري الجنوبي، مخرج 20، شارع معن بن زائدة</p>
+                <p><a href="https://goo.gl/maps/4iqrXdCN7Jbkuben9" target="_blank">عرض الموقع على الخريطة</a></p>
+            </div>
+        </div>
+        <div class="contact-item">
+            <div class="contact-icon">
+                <i class="fas fa-phone-alt"></i>
+            </div>
+            <div>
+                <p><a href="tel:0581602323">0581602323</a></p>
+                <p><a href="tel:920009041">920009041</a></p>
+            </div>
+        </div>
+        <div class="contact-item">
+            <div class="contact-icon">
+                <i class="fas fa-envelope"></i>
+            </div>
+            <div>
+                <p>sales@srules.com.sa</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+                <div class="footer-column">
+                    <h3>تابعنا</h3>
+                    <div class="social-links">
+                        <a href="#" class="social-link">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="social-link">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="social-link">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="social-link">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="#" class="social-link">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
+                    <div class="mt-5">
+                        <h3>ساعات العمل</h3>
+                        <p>السبت - الخميس: 9:00 ص - 9:00 م</p>
+                        <p>الجمعة: 2:00 م - 9:00 م</p>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025 قواعد النظم. جميع الحقوق محفوظة.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- زر العودة للأعلى -->
+    <div class="back-to-top" id="back-to-top">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+
+    <!-- نافذة العرض المصغر -->
+    <div class="lightbox" id="lightbox">
+        <div class="lightbox-content">
+            <img src="" alt="" class="lightbox-img" id="lightbox-img">
+            <div class="lightbox-close" id="lightbox-close">
+                <i class="fas fa-times"></i>
+            </div>
+            <div class="lightbox-caption" id="lightbox-caption"></div>
+        </div>
+    </div>
+</div>
+    <script>
+        // تحريك رأس الصفحة عند التمرير
+        window.addEventListener('scroll', function() {
+            const header = document.getElementById('header');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // زر القائمة المتنقلة
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const navLinks = document.getElementById('nav-links');
+
+        mobileMenuBtn.addEventListener('click', function() {
+            navLinks.classList.toggle('show');
+            const icon = mobileMenuBtn.querySelector('i');
+            if (navLinks.classList.contains('show')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
+
+        // إغلاق القائمة عند النقر على رابط
+        const navItems = document.querySelectorAll('.nav-links a');
+        navItems.forEach(item => {
+            item.addEventListener('click', function() {
+                if (window.innerWidth <= 768) {
+                    navLinks.classList.remove('show');
+                    const icon = mobileMenuBtn.querySelector('i');
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            });
+        });
+
+        // زر العودة للأعلى
+        const backToTop = document.getElementById('back-to-top');
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 300) {
+                backToTop.classList.add('show');
+            } else {
+                backToTop.classList.remove('show');
+            }
+        });
+
+        backToTop.addEventListener('click', function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // تأثيرات التمرير
+        const scrollAnimations = document.querySelectorAll('.scroll-animation');
+        
+        function checkScroll() {
+            scrollAnimations.forEach(animation => {
+                const animationPosition = animation.getBoundingClientRect().top;
+                const screenPosition = window.innerHeight / 1.2;
+                
+                if (animationPosition < screenPosition) {
+                    animation.classList.add('animate');
+                }
+            });
+        }
+        
+        window.addEventListener('scroll', checkScroll);
+        window.addEventListener('load', checkScroll);
+
+        // التحميل المتأخر للصور
+        const lazyImages = document.querySelectorAll('.lazy-load');
+        
+        function lazyLoad() {
+            lazyImages.forEach(img => {
+                const imgPosition = img.getBoundingClientRect().top;
+                const screenPosition = window.innerHeight;
+                
+                if (imgPosition < screenPosition) {
+                    img.classList.add('loaded');
+                }
+            });
+        }
+        
+        window.addEventListener('scroll', lazyLoad);
+        window.addEventListener('load', lazyLoad);
+
+        // شرائح آراء العملاء
+        const testimonialItems = document.querySelectorAll('.testimonial-item');
+        const prevBtn = document.querySelector('.prev-btn');
+        const nextBtn = document.querySelector('.next-btn');
+        let currentIndex = 0;
+
+        function showTestimonial(index) {
+            testimonialItems.forEach(item => item.classList.remove('active'));
+            testimonialItems[index].classList.add('active');
+        }
+
+        prevBtn.addEventListener('click', function() {
+            currentIndex--;
+            if (currentIndex < 0) {
+                currentIndex = testimonialItems.length - 1;
+            }
+            showTestimonial(currentIndex);
+        });
+
+        nextBtn.addEventListener('click', function() {
+            currentIndex++;
+            if (currentIndex >= testimonialItems.length) {
+                currentIndex = 0;
+            }
+            showTestimonial(currentIndex);
+        });
+
+        // تغيير الشهادة تلقائياً كل 5 ثوانٍ
+        setInterval(function() {
+            currentIndex++;
+            if (currentIndex >= testimonialItems.length) {
+                currentIndex = 0;
+            }
+            showTestimonial(currentIndex);
+        }, 5000);
+
+        // الأكورديون للأسئلة الشائعة
+        const accordionItems = document.querySelectorAll('.accordion-item');
+        
+        accordionItems.forEach(item => {
+            const header = item.querySelector('.accordion-header');
+            
+            header.addEventListener('click', function() {
+                item.classList.toggle('active');
+            });
+        });
+
+        // نافذة العرض المصغر للصور
+        const galleryItems = document.querySelectorAll('.gallery-item');
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+        const lightboxCaption = document.getElementById('lightbox-caption');
+        const lightboxClose = document.getElementById('lightbox-close');
+
+        galleryItems.forEach(item => {
+            item.addEventListener('click', function() {
+                const img = item.querySelector('img');
+                const caption = item.querySelector('.gallery-caption h4');
+                
+                lightboxImg.src = img.src;
+                lightboxCaption.textContent = caption.textContent;
+                lightbox.classList.add('show');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        lightboxClose.addEventListener('click', function() {
+            lightbox.classList.remove('show');
+            document.body.style.overflow = 'auto';
+        });
+
+        lightbox.addEventListener('click', function(e) {
+            if (e.target === lightbox) {
+                lightbox.classList.remove('show');
+                document.body.style.overflow = 'auto';
+            }
+        });
+    </script>
+    <!-- JavaScript لتحديث شريط التقدم -->
+  <script>
+    window.onscroll = function () {
+      const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+      const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const progress = (scrollTop / scrollHeight) * 100;
+      document.getElementById("progress-bar").style.width = progress + "%";
+    };
+  </script>
+  <script>
+    var loadingText = document.querySelector('.loading-text');
+    var loadingPercent = document.querySelector('.loading-percent');
+    var loadingProgress = document.querySelector('.loading-progress');
+    var loadingScreen = document.getElementById('loading-screen');
+    var mainContent = document.getElementById('main-content');
+
+    var count = 0;
+    var progressWidth = 0;
+    var loadingInterval = setInterval(animateLoading, 30);
+
+    function animateLoading() {
+      if (count >= 100 && progressWidth >= 400) {
+        loadingText.textContent = "تم التحميل";
+        loadingText.style.fontSize = "40px";
+        loadingText.classList.add("loading-add");
+        clearInterval(loadingInterval);
+
+        // بعد الانتهاء، إخفاء شاشة التحميل وعرض المحتوى
+        setTimeout(() => {
+          loadingScreen.style.display = 'none';
+          mainContent.classList.add('show');
+        }, 500);
+      } else {
+        progressWidth += 4;
+        count += 1;
+        loadingProgress.style.width = progressWidth + 'px';
+        loadingPercent.textContent = count + '%';
+      }
+    }
+  </script>
+</body>
+</html>
+
+
+
+
+
